@@ -78,8 +78,8 @@ function DeleteUser(id) {
 var row = function (user) {
     return "<tr data-rowid='" + user.id + "'><td>" + user.id + "</td>" +
         "<td>" + user.name + "</td> <td>" + user.age + "</td>" +
-        "<td><a class='editLink' data-id='" + user.id + "'>Изменить</a> | " +
-        "<a class='removeLink' data-id='" + user.id + "'>Удалить</a></td></tr>";
+        "<td><a class='editLink' data-id='" + user.id + "'>Edit</a> | " +
+        "<a class='removeLink' data-id='" + user.id + "'>Remove</a></td></tr>";
 }
 
 $("#reset").click(function (e) {

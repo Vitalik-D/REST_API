@@ -1,0 +1,9 @@
+.cur{
+    cursor: pointer;
+}
+.editLink {
+    cursor: pointer;
+}
+.removeLink{
+    cursor: pointer;
+}
