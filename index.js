@@ -1,18 +1,17 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs");
-
-const server = express();
+const port = process.env.PORT || 3000;
+const index = express();
 const jsonParser = bodyParser.json();
 
-server.use(express.static(__dirname + "/public"));
-server.get("/api/users", function(req, res){
-
+index.use(express.static(__dirname + "/public"));
+index.get("/api/users", function(req, res){
     const content = fs.readFileSync("users.json", "utf8");
     const users = JSON.parse(content);
     res.send(users);
 });
-server.get("/api/users/:id", function(req, res){
+index.get("/api/users/:id", function(req, res){
 
     let id = req.params.id; // получаем id
     const content = fs.readFileSync("users.json", "utf8");
@@ -31,7 +30,7 @@ server.get("/api/users/:id", function(req, res){
         res.status(404).send();
     }
 });
-server.post("/api/users", jsonParser, function (req, res) {
+index.post("/api/users", jsonParser, function (req, res) {
 
     if(!req.body) return res.sendStatus(400);
 
@@ -49,7 +48,7 @@ server.post("/api/users", jsonParser, function (req, res) {
     fs.writeFileSync("users.json", data);
     res.send(user);
 });
-server.delete("/api/users/:id", function(req, res){
+index.delete("/api/users/:id", function(req, res){
 
     const id = req.params.id;
     const data = fs.readFileSync("users.json", "utf8");
@@ -71,7 +70,7 @@ server.delete("/api/users/:id", function(req, res){
         res.status(404).send();
     }
 });
-server.put("/api/users", jsonParser, function(req, res){
+index.put("/api/users", jsonParser, function(req, res){
 
     if(!req.body) return res.sendStatus(400);
 
@@ -100,6 +99,6 @@ server.put("/api/users", jsonParser, function(req, res){
     }
 });
 
-server.listen(3000, function(){
+index.listen(port, function(){
     console.log("Loading...");
 });
