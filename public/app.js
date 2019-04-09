@@ -1,4 +1,3 @@
-// Получение всех пользователей
 function GetUsers() {
     $.ajax({
         url: "/api/users",
@@ -7,14 +6,12 @@ function GetUsers() {
         success: function (users) {
             var rows = "";
             $.each(users, function (index, user) {
-                // добавляем полученные элементы в таблицу
                 rows += row(user);
             })
             $("table tbody").append(rows);
         }
     });
 }
-// Получение одного пользователя
 function GetUser(id) {
     $.ajax({
         url: "/api/users/"+id,
@@ -28,7 +25,6 @@ function GetUser(id) {
         }
     });
 }
-// Добавление пользователя
 function CreateUser(userName, userAge) {
     $.ajax({
         url: "api/users",
@@ -44,7 +40,6 @@ function CreateUser(userName, userAge) {
         }
     })
 }
-// Изменение пользователя
 function EditUser(userId, userName, userAge) {
     $.ajax({
         url: "api/users",
@@ -62,14 +57,12 @@ function EditUser(userId, userName, userAge) {
     })
 }
 
-// сброс формы
 function reset() {
     var form = document.forms["userForm"];
     form.reset();
     form.elements["id"].value = 0;
 }
 
-// Удаление пользователя
 function DeleteUser(id) {
     $.ajax({
         url: "api/users/"+id,
@@ -81,21 +74,21 @@ function DeleteUser(id) {
         }
     })
 }
-// создание строки для таблицы
+
 var row = function (user) {
     return "<tr data-rowid='" + user.id + "'><td>" + user.id + "</td>" +
         "<td>" + user.name + "</td> <td>" + user.age + "</td>" +
         "<td><a class='editLink' data-id='" + user.id + "'>Изменить</a> | " +
         "<a class='removeLink' data-id='" + user.id + "'>Удалить</a></td></tr>";
 }
-// сброс значений формы
+
 $("#reset").click(function (e) {
 
     e.preventDefault();
     reset();
 })
 
-// отправка формы
+
 $("form").submit(function (e) {
     e.preventDefault();
     var id = this.elements["id"].value;
@@ -107,16 +100,14 @@ $("form").submit(function (e) {
         EditUser(id, name, age);
 });
 
-// нажимаем на ссылку Изменить
 $("body").on("click", ".editLink", function () {
     var id = $(this).data("id");
     GetUser(id);
 })
-// нажимаем на ссылку Удалить
+
 $("body").on("click", ".removeLink", function () {
     var id = $(this).data("id");
     DeleteUser(id);
 })
 
-// загрузка пользователей
 GetUsers();

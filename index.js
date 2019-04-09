@@ -52,7 +52,7 @@ index.delete("/api/users/:id", function(req, res){
 
     const id = req.params.id;
     const data = fs.readFileSync("users.json", "utf8");
-    var users = JSON.parse(data);
+    const users = JSON.parse(data);
     let index = -1;
     for(let i=0; i<users.length; i++){
         if(users[i].id==id){
