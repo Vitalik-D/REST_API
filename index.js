@@ -3,6 +3,7 @@ const express = require("express");
 const Schema = mongoose.Schema;
 const app = express();
 const jsonParser = express.json();
+const port = process.env.PORT || 3000;
 
 const userScheme = new Schema({name: String, age: Number}, {versionKey: false});
 const User = mongoose.model("User", userScheme);
@@ -11,7 +12,7 @@ const User = mongoose.model("User", userScheme);
 app.use(express.static(__dirname + "/public"));
 mongoose.connect("mongodb+srv://api:test@apitest-tgljl.mongodb.net/test?retryWrites=true", { useNewUrlParser: true }, function(err){
   if(err) return console.log(err);
-  app.listen(3000, function(){
+  app.listen(port, function(){
     console.log("Сервер ожидает подключения...");
   });
 });
