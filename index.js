@@ -5,58 +5,63 @@ const app = express();
 const jsonParser = express.json();
 const port = process.env.PORT || 3000;
 
-const userScheme = new Schema({name: String, age: Number}, {versionKey: false});
+const userScheme = new Schema(
+  { name: String, age: Number },
+  { versionKey: false }
+);
 const User = mongoose.model("User", userScheme);
 
-
 app.use(express.static(__dirname + "/public"));
-mongoose.connect("mongodb+srv://api:test@apitest-tgljl.mongodb.net/test?retryWrites=true", { useNewUrlParser: true }, function(err){
-  if(err) return console.log(err);
-  app.listen(port, function(){
-    console.log("Сервер ожидает подключения...");
+mongoose.connect(
+  "mongodb+srv://api:test@apitest-tgljl.mongodb.net/test?retryWrites=true",
+  { useNewUrlParser: true },
+  function(err) {
+    if (err) return console.log(err);
+    app.listen(port, function() {
+      console.log("Server running");
+    });
+  }
+);
+
+app.get("/api/users", function(req, res) {
+  User.find({}, function(err, users) {
+    if (err) return console.log(err);
+    res.send(users);
   });
 });
 
-app.get("/api/users", function(req, res){
-
-  User.find({}, function(err, users){
-
-    if(err) return console.log(err);
-    res.send(users)
-  });
-});
-
-app.get("/api/users/:id", function(req, res){
-
+app.get("/api/users/:id", function(req, res) {
   const id = req.params.id;
-  User.findOne({_id: id}, function(err, user){
-
-    if(err) return console.log(err);
+  User.findOne({ _id: id }, function(err, user) {
+    if (err) return console.log(err);
     res.send(user);
   });
 });
 
-app.post("/api/users", jsonParser, function (req, res) {
+app.post("/api/users", jsonParser, function(req, res) {
   if (!req.body) return res.sendStatus(400);
 
   const userName = req.body.name;
   const userAge = req.body.age;
-  const user = new User( {name: userName, age: userAge} )
+  const user = new User({ name: userName, age: userAge });
 
-  user.save(function (err) {
-    if(err) return console.log(err);
+  user.save(function(err) {
+    if (err) return console.log(err);
     res.send(user);
-  })
+  });
 });
 
-app.delete("/api/users", jsonParser, function (req, res) {
+app.delete("/api/users", jsonParser, function(req, res) {
   if (!req.body) return res.sendStatus(400);
   const id = req.body.id;
   const userName = req.body.name;
   const userAge = req.body.age;
   const newUser = { age: userAge, name: userName };
-  User.findOneAndUpdate({_id: id}, newUser, { new: true }, function (err, user) {
-    if(err) return console.log(err);
+  User.findOneAndUpdate({ _id: id }, newUser, { new: true }, function(
+    err,
+    user
+  ) {
+    if (err) return console.log(err);
     res.send(user);
-  })
+  });
 });
