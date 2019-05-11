@@ -85,8 +85,8 @@ function DeleteUser(id) {
 let row = function (user) {
   return "<tr data-rowid='" + user._id + "'><td>" + user._id + "</td>" +
       "<td>" + user.name + "</td> <td>" + user.age + "</td>" +
-      "<td><a class='editLink' data-id='" + user._id + "'>Изменить</a> | " +
-      "<a class='removeLink' data-id='" + user._id + "'>Удалить</a></td></tr>";
+      "<td><a class='editLink' data-id='" + user._id + "'>Сhange</a> | " +
+      "<a class='removeLink' data-id='" + user._id + "'>Delete</a></td></tr>";
 }
 
 $("#reset").click(function (e) {

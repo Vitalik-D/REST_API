@@ -10,6 +10,7 @@ const User = mongoose.model("User", userScheme);
 
 app.use(express.static(__dirname + "/public"));
 
+
 mongoose.connect(
   "mongodb+srv://api:test@apitest-tgljl.mongodb.net/test?retryWrites=true",
   { useNewUrlParser: true },
