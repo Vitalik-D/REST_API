@@ -1,102 +1,61 @@
+const mongoose = require("mongoose");
 const express = require("express");
-const bodyParser = require("body-parser");
-const fs = require("fs");
-const port = process.env.PORT || 3000;
-const index = express();
-const jsonParser = bodyParser.json();
+const Schema = mongoose.Schema;
+const app = express();
+const jsonParser = express.json();
 
-index.use(express.static(__dirname + "/public"));
-index.get("/api/users", function(req, res) {
-  const content = fs.readFileSync("users.json", "utf8");
-  const users = JSON.parse(content);
-  res.send(users);
+const userScheme = new Schema({name: String, age: Number}, {versionKey: false});
+const User = mongoose.model("User", userScheme);
+
+
+app.use(express.static(__dirname + "/public"));
+mongoose.connect("mongodb+srv://api:test@apitest-tgljl.mongodb.net/test?retryWrites=true", { useNewUrlParser: true }, function(err){
+  if(err) return console.log(err);
+  app.listen(3000, function(){
+    console.log("Сервер ожидает подключения...");
+  });
 });
-index.get("/api/users/:id", function(req, res) {
-  let id = req.params.id; // получаем id
-  const content = fs.readFileSync("users.json", "utf8");
-  let users = JSON.parse(content);
-  let user = null;
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].id == id) {
-      user = users[i];
-      break;
-    }
-  }
-  if (user) {
-    res.send(user);
-  } else {
-    res.status(404).send();
-  }
+
+app.get("/api/users", function(req, res){
+
+  User.find({}, function(err, users){
+
+    if(err) return console.log(err);
+    res.send(users)
+  });
 });
-index.post("/api/users", jsonParser, function(req, res) {
-  if (!req.body) return res.sendStatus(400);
 
-  const userName = req.body.name;
-  const userAge = req.body.age;
-  const user = { name: userName, age: userAge };
+app.get("/api/users/:id", function(req, res){
 
-  let data = fs.readFileSync("users.json", "utf8");
-  const users = JSON.parse(data);
-
-  const id = Math.max.apply(
-    Math,
-    users.map(function(o) {
-      return o.id;
-    })
-  );
-  user.id = id + 1;
-  users.push(user);
-  data = JSON.stringify(users);
-  fs.writeFileSync("users.json", data);
-  res.send(user);
-});
-index.delete("/api/users/:id", function(req, res) {
   const id = req.params.id;
-  const data = fs.readFileSync("users.json", "utf8");
-  const users = JSON.parse(data);
-  let index = -1;
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].id == id) {
-      index = i;
-      break;
-    }
-  }
-  if (index > -1) {
-    const user = users.splice(index, 1)[0];
-    const data = JSON.stringify(users);
-    fs.writeFileSync("users.json", data);
+  User.findOne({_id: id}, function(err, user){
+
+    if(err) return console.log(err);
     res.send(user);
-  } else {
-    res.status(404).send();
-  }
+  });
 });
-index.put("/api/users", jsonParser, function(req, res) {
+
+app.post("/api/users", jsonParser, function (req, res) {
   if (!req.body) return res.sendStatus(400);
 
-  const userId = req.body.id;
   const userName = req.body.name;
   const userAge = req.body.age;
+  const user = new User( {name: userName, age: userAge} )
 
-  const data = fs.readFileSync("users.json", "utf8");
-  let users = JSON.parse(data);
-  let user;
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].id == userId) {
-      user = users[i];
-      break;
-    }
-  }
-  if (user) {
-    user.age = userAge;
-    user.name = userName;
-    const data = JSON.stringify(users);
-    fs.writeFileSync("users.json", data);
+  user.save(function (err) {
+    if(err) return console.log(err);
     res.send(user);
-  } else {
-    res.status(404).send(user);
-  }
+  })
 });
 
-index.listen(port, function() {
-  console.log("Loading...");
+app.delete("/api/users", jsonParser, function (req, res) {
+  if (!req.body) return res.sendStatus(400);
+  const id = req.body.id;
+  const userName = req.body.name;
+  const userAge = req.body.age;
+  const newUser = { age: userAge, name: userName };
+  User.findOneAndUpdate({_id: id}, newUser, { new: true }, function (err, user) {
+    if(err) return console.log(err);
+    res.send(user);
+  })
 });
